@@ -1,4 +1,9 @@
 <?php
+/**
+ * auther: AMEN
+ * url: https://www.ymypay.cn
+ * date:2023/7/6
+ */
 
 class stripe_plugin
 {
