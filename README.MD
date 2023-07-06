@@ -11,3 +11,6 @@
 汇率：默认1.08。易只支持人民币，所以需要转换货币汇率。这里输入1人民币=多少你的产品货币。比如你的产品货币是HKD，那么1人民币=1.08港币，这里填1.08
 
 更多使用教程：https://blog.ymypay.cn/index.php/2023/07/06/ypay_stripe/
+# 反馈建议
+在github:https://github.com/2331892928/stripe_epay提交issues即可  
+若已有bug且您知道如何修复，欢迎提交Pr
