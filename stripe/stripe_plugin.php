@@ -3,6 +3,7 @@
  * auther: AMEN
  * url: https://www.ymypay.cn
  * date:2023/7/6
+ * title:湮灭网络工作室
  */
 
 class stripe_plugin
