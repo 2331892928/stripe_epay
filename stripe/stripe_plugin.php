@@ -1,30 +1,24 @@
 <?php
-/**
- * auther: AMEN
- * url: https://www.ymypay.cn
- * date:2023/7/6
- * title:湮灭网络工作室
- */
 
 class stripe_plugin
 {
-	static public $info = [
-		'name'        => 'stripe', //支付插件英文名称，需和目录名称一致，不能有重复
-		'showname'    => 'stripe支付', //支付插件显示名称
-		'author'      => 'AMEN', //支付插件作者
-		'link'        => 'https://www.ymypay.cn/', //支付插件作者链接
-		'types'       => ['alipay','wxpay'], //支付插件支持的支付方式，可选的有alipay,qqpay,wxpay,bank
-		'inputs' => [ //支付插件要求传入的参数以及参数显示名称，可选的有appid,appkey,appsecret,appurl,appmchid
+    static public $info = [
+        'name'        => 'stripe', //支付插件英文名称，需和目录名称一致，不能有重复
+        'showname'    => 'stripe支付', //支付插件显示名称
+        'author'      => 'AMEN', //支付插件作者
+        'link'        => 'https://www.ymypay.cn/', //支付插件作者链接
+        'types'       => ['alipay','wxpay'], //支付插件支持的支付方式，可选的有alipay,qqpay,wxpay,bank
+        'inputs' => [ //支付插件要求传入的参数以及参数显示名称，可选的有appid,appkey,appsecret,appurl,appmchid
             'appid' => [
                 'name' => '产品id',
                 'type' => 'input',
                 'note' => '产品id',
             ],
-			'appkey' => [
-				'name' => '私钥',
-				'type' => 'input',
-				'note' => '真实模式私钥，一般为：sk_live_xxxxxx，在stripe的后台首页即可看见',
-			],
+            'appkey' => [
+                'name' => '私钥',
+                'type' => 'input',
+                'note' => '真实模式私钥，一般为：sk_live_xxxxxx，在stripe的后台首页即可看见',
+            ],
             'appurl' => [
                 'name' => '镜像站',
                 'type' => 'input',
@@ -35,9 +29,9 @@ class stripe_plugin
                 'type' => 'input',
                 'note' => '汇率，如：1.08',
             ]
-		],
-		'select' => null,
-		'note' => '<p>此插件为stripe支付，stripe官网：https://stripe.com<p>'
+        ],
+        'select' => null,
+        'note' => '<p>此插件为stripe支付，stripe官网：https://stripe.com<p>'
             .
             '<p>镜像站：默认空为官方链接，由于stripe国外，防止用户无法访问(不是你机器访问，是用户访问，用户需要访问链接前往支付地址)，你可以反代或镜像站：https://checkout.stripe.com  也可以自定义域;便不用反代，见：https://stripe.com/docs/payments/checkout/custom-domains</p>'
             .
@@ -47,12 +41,12 @@ class stripe_plugin
             .
             '更多使用教程：https://blog.ymypay.cn/index.php/2023/07/06/ypay_stripe/'
         ,
-		'bindwxmp' => false, //是否支持绑定微信公众号
-		'bindwxa' => false, //是否支持绑定微信小程序
-	];
+        'bindwxmp' => false, //是否支持绑定微信公众号
+        'bindwxa' => false, //是否支持绑定微信小程序
+    ];
 
-	static public function submit(){
-		global $siteurl, $channel, $order, $sitename, $conf;
+    static public function submit(){
+        global $siteurl, $channel, $order, $sitename, $conf;
 
         try {
             $code_url = self::addOrder();
@@ -65,10 +59,10 @@ class stripe_plugin
         return ['type'=>'jump','url'=>$code_url['msg']];
 
 
-	}
+    }
 
-	static public function mapi(){
-		global $siteurl, $channel, $order, $device, $mdevice;
+    static public function mapi(){
+        global $siteurl, $channel, $order, $device, $mdevice;
         try {
             $code_url = self::addOrder();
             if ($code_url['code'] != 200){
@@ -78,21 +72,21 @@ class stripe_plugin
             return ['type'=>'error','msg'=>$e->getMessage()];
         }
         return ['type'=>'jump','url'=>$code_url['msg']];
-	}
+    }
 
-	static private function make_sign($param, $key){
-		ksort($param);
-		$signstr = '';
-	
-		foreach($param as $k => $v){
-			if($k != "sign" && $v!=''){
-				$signstr .= $k.'='.$v.'&';
-			}
-		}
-		$signstr .= 'key='.$key;
-		$sign = strtoupper(md5($signstr));
-		return $sign;
-	}
+    static private function make_sign($param, $key){
+        ksort($param);
+        $signstr = '';
+
+        foreach($param as $k => $v){
+            if($k != "sign" && $v!=''){
+                $signstr .= $k.'='.$v.'&';
+            }
+        }
+        $signstr .= 'key='.$key;
+        $sign = strtoupper(md5($signstr));
+        return $sign;
+    }
 //汇率接口
     private function getExchangeRate($from,$to)
     {
@@ -106,6 +100,7 @@ class stripe_plugin
         }
     }
     static private function check($id){
+        global $channel;
         require_once(PAY_ROOT."inc/common.php");
 
         try{
@@ -118,9 +113,9 @@ class stripe_plugin
         }
 
     }
-	//通用创建订单
-	static private function addOrder(){
-		global $channel, $order, $ordername, $conf, $clientip, $siteurl, $DB;
+    //通用创建订单
+    static private function addOrder(){
+        global $channel, $order, $ordername, $conf, $clientip, $siteurl, $DB;
         require_once(PAY_ROOT."inc/common.php");
 //        $data = (new stripe_plugin)->getExchangeRate($from,$stripe_config['appsecret']);
 //        if ($data===false){
@@ -175,11 +170,11 @@ class stripe_plugin
         $api_tn = $output['id'];
         $DB->exec("update pre_order set api_trade_no='$api_tn' where trade_no='$trade_no'");
         return ['code'=>200,'msg'=>$code_url];
-	}
+    }
 
 
-	//异步回调
-	static public function notify(){
+    //异步回调
+    static public function notify(){
         global $channel, $DB, $order;
         // 处理stripe与易支付直接联系后跳回对接的return_url
         $output = self::check($order['api_trade_no']);
@@ -193,13 +188,14 @@ class stripe_plugin
         } else {
             return ['type'=>'html','data'=>'FAIL'];
         }
-	}
+    }
 
-	//同步回调
-	static public function return(){
+    //同步回调
+    static public function return(){
         global $channel, $DB, $order;
         // 处理stripe与易支付直接联系后跳回对接的return_url
         $output = self::check($order['api_trade_no']);
+
         if ($output['code']!=200){
             return ['type'=>'page','page'=>'error'];
         }
@@ -210,6 +206,28 @@ class stripe_plugin
             // 完成订单
             processReturn($order, $output['msg']['id']);
         }
-		return ['type'=>'page','page'=>'return'];
-	}
+        return ['type'=>'page','page'=>'return'];
+    }
+    //退款
+    static public function refund($order){
+        global $channel;
+        if(empty($order))exit();
+        require_once(PAY_ROOT."inc/common.php");
+        $result = ['code'=>-1, 'msg'=>"暂不支持api退款，请到https://stripe.com/ 进行退款"];
+//        try{
+//            $result = $Stripe_Class->refunds->create([
+//                    'checkout' => $order['api_trade_no'],
+//                ]);
+//            if ($result['status']=='succeeded'){
+//                $result = ['code'=>0, 'trade_no'=>$order['trade_no'], 'refund_fee'=>$result['amount']];
+//
+//            } else {
+//                $result = ['code'=>-1, 'msg'=>$result['status']];
+//
+//            }
+//        } catch(Exception $e) {
+//            $result = ['code'=>-1, 'msg'=>$e->getMessage()];
+//        }
+        return $result;
+    }
 }
