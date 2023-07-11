@@ -117,7 +117,17 @@ class stripe_plugin
     static private function addOrder(){
         global $channel, $order, $ordername, $conf, $clientip, $siteurl, $DB;
         require_once(PAY_ROOT."inc/common.php");
-//        $data = (new stripe_plugin)->getExchangeRate($from,$stripe_config['appsecret']);
+        $out_trade_no = $order['out_trade_no'];
+        $trade_no = $order['trade_no'];
+        $uid = $order['uid'];
+        $order = $DB->getRow("SELECT * FROM pre_order WHERE out_trade_no='$out_trade_no' and trade_no='$trade_no' and uid='$uid'  limit 1");
+        // 查支付方式
+        $type_id = $order['type'];
+        $typename_row = $DB->getRow("SELECT * FROM pre_type WHERE id='$type_id' limit 1");
+        if ($typename_row['status']==0){
+            return ['type'=>'error','msg'=>'支付方式未开启'];
+        }
+        //        $data = (new stripe_plugin)->getExchangeRate($from,$stripe_config['appsecret']);
 //        if ($data===false){
 //            return ['type'=>'error','msg'=>'获取汇率错误'];
 //        }
@@ -130,7 +140,7 @@ class stripe_plugin
         $num = round($hl / 0.01);
         // 再计算order人民币数量
         $num = $num * $order['money'];
-        $pay_type = $order['typename'];
+        $pay_type = $typename_row['name'];
         if ($pay_type=='alipay'){
             $pay_type = 'alipay';
         } elseif($pay_type=='wxpay'){
@@ -177,6 +187,11 @@ class stripe_plugin
     static public function notify(){
         global $channel, $DB, $order;
         // 处理stripe与易支付直接联系后跳回对接的return_url
+        $out_trade_no = $order['out_trade_no'];
+        $trade_no = $order['trade_no'];
+        $uid = $order['uid'];
+        $order = $DB->getRow("SELECT * FROM pre_order WHERE out_trade_no='$out_trade_no' and trade_no='$trade_no' and uid='$uid'  limit 1");
+
         $output = self::check($order['api_trade_no']);
         if ($output['code']!=200){
             return ['type'=>'html','data'=>'FAIL'];
@@ -194,6 +209,11 @@ class stripe_plugin
     static public function return(){
         global $channel, $DB, $order;
         // 处理stripe与易支付直接联系后跳回对接的return_url
+        $out_trade_no = $order['out_trade_no'];
+        $trade_no = $order['trade_no'];
+        $uid = $order['uid'];
+        $order = $DB->getRow("SELECT * FROM pre_order WHERE out_trade_no='$out_trade_no' and trade_no='$trade_no' and uid='$uid'  limit 1");
+
         $output = self::check($order['api_trade_no']);
 
         if ($output['code']!=200){
